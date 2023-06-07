@@ -2,6 +2,7 @@
 
 <h4> Python program :) </h4>
 
+## Install Cryptography module using pip
 ``` 
-python3 main.py 
+pip install cryptography 
 ```
