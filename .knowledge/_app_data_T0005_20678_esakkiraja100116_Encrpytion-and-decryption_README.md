@@ -1,0 +1,1 @@
+{"is_source_file": false, "format": "", "description": "", "external_files": [], "external_methods": [], "published": [], "classes": [], "methods": [], "calls": [], "search-terms": [], "state": 2, "filename": "/app/data/T0005/20678/esakkiraja100116/Encrpytion-and-decryption/README.md", "hash": "e36a1139054b11d58bda9ea41872eb1a", "format-version": 3, "code-base-name": "b6963py"}
