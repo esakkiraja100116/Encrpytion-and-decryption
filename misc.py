@@ -17,6 +17,7 @@ def extract_input_params(args, kwargs):
     # Remove None values
     return {k: v for k, v in extracted_params.items() if v is not None}
 
+print("test");
 
 def to_iso_format(value):
     return (
