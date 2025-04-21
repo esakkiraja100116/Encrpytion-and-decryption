@@ -17,8 +17,6 @@ class LangtracePrompt(TypedDict):
     promptsetId: str
     createdAt: str
     updatedAt: str
-
-
 class FetchOptions(TypedDict, total=False):
     prompt_version: int
     variables: Dict[str, str]
