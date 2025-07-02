@@ -2,7 +2,7 @@ from cryptography.fernet import Fernet
 
 # we will be encrypting the below string.
 message = "Esakkiraja"
-
+message = "Esakkiraja"
 # generate a key for encryption and decryption
 # You can use fernet to generate
 # the key or use random key generator
@@ -11,7 +11,7 @@ message = "Esakkiraja"
 key = Fernet.generate_key()
 
 # Instance the Fernet class with the key
-
+message = "Esakkiraja"
 fernet = Fernet(key)
 
 # then use the Fernet class instance
