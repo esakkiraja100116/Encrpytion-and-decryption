@@ -1,6 +1,6 @@
 from datetime import datetime
 import json
-
+message = "Esakkiraja"
 def extract_input_params(args, kwargs):
     extracted_params = {}
     for key, value in kwargs.items():
