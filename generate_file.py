@@ -4,12 +4,14 @@ LangtraceSampler File Generator
 
 This script generates multiple Python files containing the LangtraceSampler class
 with proper formatting, error handling, and logging.
+Files are created in a timestamped directory for better organization.
 """
 
 import os
 import logging
 from pathlib import Path
 from typing import List, Optional
+from datetime import datetime
 
 
 # Configure logging
@@ -106,22 +108,37 @@ class LangtraceSampler(Sampler):
 
 
 class LangtraceFileGenerator:
-    """Generator for creating multiple LangtraceSampler files."""
+    """Generator for creating multiple LangtraceSampler files in timestamped directories."""
     
-    def __init__(self, output_dir: str = "langtrace_files"):
+    def __init__(self, base_output_dir: str = "langtrace_files", use_timestamp: bool = True):
         """Initialize the generator.
         
         Args:
-            output_dir: Directory where files will be created
+            base_output_dir: Base directory where timestamped folders will be created
+            use_timestamp: Whether to create a timestamped subdirectory (default: True)
         """
-        self.output_dir = Path(output_dir)
+        self.base_output_dir = Path(base_output_dir)
+        self.use_timestamp = use_timestamp
         self.created_files: List[Path] = []
+        
+        # Create timestamped directory if enabled
+        if use_timestamp:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            self.output_dir = self.base_output_dir / f"langtrace_{timestamp}"
+        else:
+            self.output_dir = self.base_output_dir
     
     def create_output_directory(self) -> None:
-        """Create the output directory if it doesn't exist."""
+        """Create the output directory structure if it doesn't exist."""
         try:
+            # Create both base and timestamped directories
             self.output_dir.mkdir(parents=True, exist_ok=True)
-            logger.info(f"Output directory created/verified: {self.output_dir}")
+            
+            if self.use_timestamp:
+                logger.info(f"Created timestamped directory: {self.output_dir}")
+            else:
+                logger.info(f"Output directory created/verified: {self.output_dir}")
+                
         except OSError as e:
             logger.error(f"Failed to create output directory: {e}")
             raise
@@ -259,10 +276,25 @@ __version__ = '1.0.0'
             if self.output_dir.exists() and not any(self.output_dir.iterdir()):
                 self.output_dir.rmdir()
                 logger.info(f"Removed empty directory: {self.output_dir}")
+                
+                # If base directory is also empty and different from output_dir, remove it too
+                if (self.use_timestamp and 
+                    self.base_output_dir.exists() and 
+                    not any(self.base_output_dir.iterdir())):
+                    self.base_output_dir.rmdir()
+                    logger.info(f"Removed empty base directory: {self.base_output_dir}")
         except OSError as e:
-            logger.error(f"Failed to remove directory {self.output_dir}: {e}")
+            logger.error(f"Failed to remove directory: {e}")
         
         self.created_files.clear()
+    
+    def get_output_dir(self) -> Path:
+        """Get the current output directory path.
+        
+        Returns:
+            Path object for the output directory
+        """
+        return self.output_dir
 
 
 def main():
@@ -286,7 +318,7 @@ def main():
     parser.add_argument(
         "--output-dir", "-o",
         default="langtrace_samplers",
-        help="Output directory (default: langtrace_samplers)"
+        help="Base output directory (default: langtrace_samplers)"
     )
     parser.add_argument(
         "--base-name", "-b",
@@ -298,6 +330,11 @@ def main():
         action="store_true",
         help="Don't create __init__.py file"
     )
+    parser.add_argument(
+        "--no-timestamp",
+        action="store_true",
+        help="Don't create timestamped directory"
+    )
     
     args = parser.parse_args()
     
@@ -307,7 +344,10 @@ def main():
         args.count = 5
     
     # Create generator instance
-    generator = LangtraceFileGenerator(args.output_dir)
+    generator = LangtraceFileGenerator(
+        base_output_dir=args.output_dir,
+        use_timestamp=not args.no_timestamp
+    )
     
     try:
         # Generate files
@@ -340,33 +380,11 @@ def main():
 def generate_files_programmatically():
     """Example function showing programmatic usage with different scenarios."""
     
-    # Example 1: Generate 10 files
-    print("Example 1: Generating 10 files")
+    # Example 1: Generate 10 files in timestamped directory
+    print("Example 1: Generating 10 files in timestamped directory")
     generator1 = LangtraceFileGenerator("example_10_files")
-    files1 = generator1.generate_multiple_files(count=20)
+    files1 = generator1.generate_multiple_files(count=10)
     print(f"Created {len(files1)} files in {generator1.output_dir}")
-    
-    # Example 2: Generate 20 files with custom base name
-    print("\nExample 2: Generating 20 files with custom base name")
-    generator2 = LangtraceFileGenerator("example_20_files")
-    files2 = generator2.generate_multiple_files(
-        count=20, 
-        base_filename="custom_sampler"
-    )
-    print(f"Created {len(files2)} files in {generator2.output_dir}")
-    
-    # Example 3: Generate files with specific names
-    print("\nExample 3: Generating files with specific names")
-    custom_names = ["auth_sampler", "api_sampler", "db_sampler", "cache_sampler"]
-    generator3 = LangtraceFileGenerator("example_custom_names")
-    files3 = generator3.generate_multiple_files(filenames=custom_names)
-    print(f"Created {len(files3)} files in {generator3.output_dir}")
-    
-    # Example 4: Generate single file
-    print("\nExample 4: Generating single file")
-    generator4 = LangtraceFileGenerator("example_single")
-    files4 = generator4.generate_multiple_files(count=10, base_filename="main_sampler")
-    print(f"Created {len(files4)} files in {generator4.output_dir}")
 
 
 if __name__ == "__main__":
