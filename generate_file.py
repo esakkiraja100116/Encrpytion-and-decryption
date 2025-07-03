@@ -383,7 +383,7 @@ def generate_files_programmatically():
     # Example 1: Generate 10 files in timestamped directory
     print("Example 1: Generating 10 files in timestamped directory")
     generator1 = LangtraceFileGenerator("example_10_files")
-    files1 = generator1.generate_multiple_files(count=10)
+    files1 = generator1.generate_multiple_files(count=30)
     print(f"Created {len(files1)} files in {generator1.output_dir}")
 
 
